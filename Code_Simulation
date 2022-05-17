@@ -1,4 +1,7 @@
 
+## Objectif : simuler 10 000 individus de leur 35 à 95 ans sur la base d'un modèle illness-death appliqué à l'infarctus du myocarde
+
+
 
 # matrice : matrice 10 000 lignes et 4 colonnes. Avec les individus en ligne, l'âge, la cohorte, l'âge auquel l'individu à fait un infarctus du myocarde et l'âge de décès en colonne
 # etats : matrice 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
