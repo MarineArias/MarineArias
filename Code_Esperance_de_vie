@@ -1,0 +1,103 @@
+
+
+### En utilisant le programme Code_Simulation
+# Attention : les espérances de vie sont calculés pour 35 ans sur 81 ans (de 35 à 115 ans)
+# Le code de simulation doit être adapté à ce cas
+
+## Objectif : calculer l'espérance de vie et l'espérance de vie en bonne santé pour chaque cohorte entre 1920 et 2000
+
+# etats : matrice de 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
+# survivants_sains :
+# survivants :
+# esperance_vie_bonne_sante :
+# esperance_vie :
+
+
+## Package :
+library(doParallel)
+library(foreach)
+
+cl <- makeCluster(20)
+registerDoParallel(cl)
+
+
+## Fonction générale :
+foreach(c=1920:2000) %dopar% {                   # boucle sur les cohortes
+  
+  print(c)
+  
+  survivants_sains <- data.frame(matrix(ncol=3,nrow=0))
+  survivants_sains[1,1]<- 35
+  survivants_sains[1,2] <- c
+  survivants_sains[1,3] <- 10000
+  
+  esperance_vie_bonne_sante <- data.frame(matrix(ncol=2,nrow=0))
+  
+  survivants <- data.frame(matrix(ncol=3,nrow=0))
+  survivants[1,1]<- 35
+  survivants[1,2] <- c
+  survivants[1,3] <- 10000
+  
+  esperance_vie <- data.frame(matrix(ncol=2,nrow=0))
+  
+  etats <- read.csv(paste("etats",c,sep="_"))
+  etats$X <- NULL
+  colnames(etats) <- gsub("X","",colnames(etats))
+  
+  for(age in 2:ncol(etats)){
+    vivant <- 0
+    for(i in 1:nrow(etats)){                    # calcul des sains à l'âge a (ou décédés à l'âge a mais vivants sains à l'âge a-1)
+      if(etats[i,age] == 0){
+        vivant = vivant +1
+      }
+      if(etats[i,age] == 2 & etats[i,age-1]== 0){
+        vivant = vivant + 0.5
+      }
+    }
+    ligne <- c(age+34,c,vivant)
+    survivants_sains <- rbind(survivants_sains,ligne)
+  }
+  
+  somme <- 0
+  for(age in 2:nrow(survivants_sains)){
+    somme <- somme + survivants_sains[age,3]    # calcul de la somme des sains pour chaque âge a de la cohorte c
+  }
+  e <- 1/2 + somme/10000                        # calcul de l'espérance de vie en bonne santé
+  ligne <- c(c,e)
+  esperance_vie_bonne_sante <- rbind(esperance_vie_bonne_sante,ligne)
+  
+  for(age in 2:ncol(etats)){
+    vivant <- 0
+    for(i in 1:nrow(etats)){                    # calcul des vivants sains ou malades à l'âge a ou décédés à l'âge a mais vivant (sain ou malade) à l'âge a-1
+      if(etats[i,age] == 0 | etats[i,age]== 1){
+        vivant = vivant +1
+      }
+      if((etats[i,age] == 2 | etats[i,age]== 3) & (etats[i,age-1]== 1 | etats[i,age-1]== 0)){
+        vivant = vivant + 0.5
+      }
+    }
+    ligne <- c(age+34,c,vivant)
+    survivants <- rbind(survivants,ligne)
+  }
+  
+  somme <- 0
+  for(age in 2:nrow(survivants)){
+    somme <- somme + survivants[age,3]        # calcul de la somme des survivants (malades ou sains) pour chaque âge a de la cohorte c
+  }
+  e <- 1/2 + somme/10000                        # calcul de l'espérance de vie
+  ligne <- c(c,e)
+  esperance_vie <- rbind(esperance_vie,ligne)
+  
+  colnames(survivants_sains) <- c("age","cohorte","nb_sains")
+  colnames(esperance_vie_bonne_sante) <- c("Cohorte","esperance de vie en bonne sante")
+  colnames(survivants) <- c("age","cohorte","nb_vivants")
+  colnames(esperance_vie) <- c("Cohorte","esperance_de_vie")
+  
+  esperance_vie$esperance_vie_bonne_sante <- esperance_vie_bonne_sante[,2]
+  
+  write.csv(esperance_vie,file = paste("esperance_vie",c,sep="_"))
+}
+
+
+
+
