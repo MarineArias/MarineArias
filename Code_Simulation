@@ -31,9 +31,9 @@ registerDoParallel(cl)
 
 T_1 <- Sys.time()                 
 
-foreach(c=1920:2000) %dopar% {                                    # boucle sur les cohortes
+foreach(c=1920:2000) %dopar% {                                      # boucle sur les cohortes
   
-  matrice <- matrix(c(0),                                         # création pour chaque cohorte de la matrice des individus
+  matrice <- matrix(c(0),                                           # création pour chaque cohorte de la matrice des individus
                       nrow = nb_people,
                       ncol = 4)
   colnames(matrice) <- c("age","cohorte","age_maladie","age_deces")
@@ -46,66 +46,78 @@ foreach(c=1920:2000) %dopar% {                                    # boucle sur l
   }
   matrice <- as.data.frame(matrice)
   
-  etats <- matrix(c(0),                                            # création pour chaque cohorte de la matrice des états
+  etats <- matrix(c(0),                                              # création pour chaque cohorte de la matrice des états
                     nrow = nb_people,
                     ncol = horizon)
   colnames(etats) <- c(35:95)
 
   
-  for (a in 2:horizon){                                            # boucle sur les âges                  
+  for (a in 2:horizon){                                              # boucle sur les âges                  
     print(a+34)
-    for (i in 1:nrow(etats)){                                      # boucle sur les individus
+    for (i in 1:nrow(etats)){                                        # boucle sur les individus
       annee_naiss <- matrice[i,2]
       age_i <- matrice[i,1]
       
-      v_incidence <- incidence[age_i-34,annee_naiss-1919]          # récupération du taux d'incidence
-      mortalite <- quotient_morta[age_i-34,annee_naiss-1919]       # récupération du quotient de mortalité
-
+      for (age in 1:nrow(incidence_F)){      
+        for (cohorte in 1:ncol(incidence_F)){
+          if (age == age_i-34 & cohorte == annee_naiss-1919){
+            v_incidence <- incidence_F[age_i-34,annee_naiss-1919]    # récupération du taux d'incidence
+          }
+        }
+      }
+      
+      for (age in 1:nrow(quotient_morta_F)){
+        for (cohorte in 1:ncol(quotient_morta_F)){
+          if (age == age_i-34 & cohorte == annee_naiss-1919){
+            mortalite <- quotient_morta_F[age_i-34,annee_naiss-1919]  # récupération du quotient de mortalité
+          }
+        }
+      }
      
       alea <- runif(1,0,1)                                         
       
-      if (etats[i,a-1] == 0){                                      # état 0 : vivant sain
-        if (alea <= v_incidence){                                  # transition : faire un infarctus du myocarde
+      if (etats[i,a-1] == 0){                                        # état 0 : vivant sain
+        if (alea <= v_incidence){                                    # transition : faire un infarctus du myocarde
           etats[i,a] <- 1
           matrice[i,3] <- age_i
           
           alea2 <- runif(1,0,1)
-          if (alea2 <= mortalite*RR1){                             # transition : passage à l'état 3 : mourir dans la première année
+          if (alea2 <= mortalite*RR1){                               # transition : passage à l'état 3 : mourir dans la première année
             etats[i,a] <- 3
             matrice[i,4] <- age_i
           }
         }
         
         alea3 <- runif(1,0,1)
-        if (alea3 <= mortalite & alea > v_incidence){              # transition : mourir sans avoir fait d'infarctus du myocarde
+        if (alea3 <= mortalite & alea > v_incidence){                # transition : mourir sans avoir fait d'infarctus du myocarde
           etats[i,a] <- 2
           matrice[i,4] <- age_i
         }
-        if (alea3 > mortalite & alea > v_incidence){               # rester sain
+        if (alea3 > mortalite & alea > v_incidence){                 # rester sain
           etats[i,a] <- 0
         }
       }
       
-      if (etats[i,a-1] == 1){                                      # état 1 : vivant ayant fait un infarctus du myocarde
+      if (etats[i,a-1] == 1){                                        # état 1 : vivant ayant fait un infarctus du myocarde
         morta <- mortalite*RR2
-        if (alea > morta){                                         # rester vivant mais malade
-          etats[i,a] <- 1
+        if (alea > morta){                                           # rester vivant mais malade
+          etats[i,a] <- 1 
         }
-        if (alea <= morta){                                        # transition : mourir en ayant fait un infarctus du myocarde après la première année
+        if (alea <= morta){                                          # transition : mourir en ayant fait un infarctus du myocarde après la première année
           etats[i,a] <- 2
           matrice[i,4] <- age_i
         }
       }
       
-      if (etats[i,a-1] == 2){                                      # état 2 : mourir
+      if (etats[i,a-1] == 2){                                        # état 2 : mourir
         etats[i,a] <- 2
       }
       
-      if (etats[i,a-1] == 3){                                      # transition : l'individu mort d'un infarctus du myocarde durant la première année passe à mort simple l'année qui suit
+      if (etats[i,a-1] == 3){                                        # transition : l'individu mort d'un infarctus du myocarde durant la première année passe à mort simple l'année qui suit
         etats[i,a] <- 2
       }
       
-      if (matrice[i,1]<=95 & etats[i,a]!= 2){                      # vieillissement de l'individu
+      if (matrice[i,1]<=95 & etats[i,a]!= 2){                        # vieillissement de l'individu
         matrice[i,1] <- matrice[i,1] + 1
       }
     }
