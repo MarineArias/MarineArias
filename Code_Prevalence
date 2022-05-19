@@ -21,7 +21,7 @@ registerDoParallel(cl)
 
 foreach(c=1920:2000) %dopar% {                             # boucle sur les cohortes
   
-  etats_<- read.csv(paste("etats",c,sep="_"))              # lecture de la matrice des états pour la cohorte c
+  etats <- read.csv(paste("etats",c,sep="_"))              # lecture de la matrice des états pour la cohorte c
   etats$X <- NULL
   colnames(etats) <- gsub("X","",colnames(etats))
   
