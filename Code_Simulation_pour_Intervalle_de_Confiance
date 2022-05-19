@@ -16,9 +16,9 @@
 
 
 
-## Données
+## Données (données présentées pour les hommes. A faire varier selon le sexe)
 
-# Incidence (données présentées pour les hommes. A faire varier selon le sexe)
+# Incidence
 incidence <- read.csv("a01_hommes")
 incidence$X <- NULL
 colnames(incidence) <- gsub("X","",colnames(incidence))
