@@ -1,5 +1,5 @@
 
-### En utilisant les programmes Code_Simulation_pour_Intervalle_de_Confiance, Code_Esperance_vie_Intervalle_de_Confiance et Code_Prevalence_Intervalle_de_Confiance
+### En utilisant les programmes Code_Simulation_pour_Intervalle_de_Confiance, Code_Esperance_de_vie_Intervalle_de_Confiance et Code_Prevalence_Intervalle_de_Confiance
 
 ## Objectif : récupérer les intervalles de confiance par âge des espérances de vie à 35 ans, des prévalences et taux de prévalence.
 
@@ -10,16 +10,20 @@
 
 
 # Intervalle de confiance pour les espérances de vie à 35 ans
-ESP_VIE <- read.csv("ESP_VIE")
-ESP_VIE$X <- NULL
-colnames(ESP_VIE) <- gsub("X","",colnames(ESP_VIE))
+esperance_de_vie <- read.csv("esperance_vie_iterations")
+esperance_de_vie$X <- NULL
+colnames(esperance_de_vie) <- gsub("X","",colnames(esperance_de_vie))
+
+esperance_de_vie_bonne_sante <- read.csv("esperance_vie_bonne_sante_iterations")
+esperance_de_vie_bonne_sante$X <- NULL
+colnames(esperance_de_vie_bonne_sante) <- gsub("X","",colnames(esperance_de_vie_bonne_sante))
 
 
-mean(ESP_VIE$esperance_de_vie)                                         # calcul de l'espérance de vie à 35 ans moyenne
-mean(ESP_VIE$esperance_de_vie_bonne_sante)                             # calcul de l'espérance de vie en bonne santé à 35 ans moyenne
+mean(esperance_de_vie$esperance_vie)                                   # calcul de l'espérance de vie à 35 ans moyenne
+mean(esperance_de_vie_bonne_sante$esperance_vie_bonne_sante)           # calcul de l'espérance de vie en bonne santé à 35 ans moyenne
 
-quantile(ESP_VIE$esperance_de_vie,probs=c(0.025,0.975))                # calcul des quantiles à 2,5% et 97,5% pour l'espérance de vie à 35 ans
-quantile(ESP_VIE$esperance_de_vie_bonne_sante,probs=c(0.025,0.975))    # calcul des quantiles à 2,5% et 97,5% pour l'espérance de vie en bonne santé à 35 ans
+quantile(esperance_de_vie$esperance_vie,probs=c(0.025,0.975))                            # calcul des quantiles à 2,5% et 97,5% pour l'espérance de vie à 35 ans
+quantile(esperance_de_vie_bonne_sante$esperance_vie_bonne_sante,probs=c(0.025,0.975))    # calcul des quantiles à 2,5% et 97,5% pour l'espérance de vie en bonne santé à 35 ans
 
 
 # Intervalle de confiance pour les prévalences par âge
