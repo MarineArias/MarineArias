@@ -16,8 +16,24 @@
 
 
 
-cohorte <- c(1940)                                              # à moduler selon les cohortes voulues
-nb_people <- 10000                                              # nombre d'individus simulés
+## Données
+
+# Incidence (données présentées pour les hommes. A faire varier selon le sexe)
+incidence <- read.csv("a01_hommes")
+incidence$X <- NULL
+colnames(incidence) <- gsub("X","",colnames(incidence))
+
+# Quotient de mortalité 
+quotient_morta <- read.csv(file="quotient_morta_homme_1940.csv",sep=";",dec=",")
+
+# Risque Relatif
+beta1_2 <- read.csv("beta1_2")
+beta1_2$X <- NULL
+colnames(beta1_2) <- gsub("X","",colnames(beta1_2))
+
+
+cohorte <- c(1940)                                         # à moduler selon les cohortes voulues
+nb_people <- 10000                                         # nombre d'individus simulés par cohorte
 
 
 ## Package
