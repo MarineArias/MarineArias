@@ -63,22 +63,12 @@ foreach(it=1:200) %dopar% {                               # boucle sur les itér
 
       for (i in 1:nrow(etats)){
         age_i <- matrice[i,1]
+        annee_naiss <- matrice[i,2]
 
-        for (age in 1:nrow(incidence)){      
-          for (cohorte in 1:ncol(incidence)){
-            if (age == age_i-34 & cohorte == annee_naiss-1919){
-              v_incidence <- incidence[age_i-34,annee_naiss-1919]  # récupération du taux d'incidence
-            }
-          }
-        }
-        
-        for (age in 1:nrow(quotient_morta)){
-          for (cohorte in 1:ncol(quotient_morta)){
-            if (age == age_i-34 & cohorte == annee_naiss-1919){
-              mortalite <- quotient_morta[age_i-34,annee_naiss-1919] # récupération du quotient de mortalité
-            }
-          }
-        }
+     
+        v_incidence <- as.numeric(incidence[a-1,c-1919])            # récupération du taux d'incidence
+        mortalite <- quotient_morta[a-1,c-1919]                     # récupération du quotient de mortalité
+      
 
         RR1 <- exp(beta1_2[it,1])                         # calcul du risque relatif de mourir durant la première année après avoir fait un infarctus du myocarde
         RR2 <- exp(beta1_2[it,2])                         # calcul du risque relatif de mourir plus d'un an après avoir fait un infarctus
