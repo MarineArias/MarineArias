@@ -25,8 +25,8 @@ foreach(c=1920:2000) %dopar% {                             # boucle sur les coho
   etats$X <- NULL
   colnames(etats) <- gsub("X","",colnames(etats))
   
-  prev <- data.frame(matrix(ncol=0,nrow=61))
-  vivants <- data.frame(matrix(ncol=0,nrow=61))
+  prev <- data.frame(matrix(ncol=3,nrow=0))
+  vivants <- data.frame(matrix(ncol=3,nrow=0))
 
   print(c)
   
@@ -37,7 +37,7 @@ foreach(c=1920:2000) %dopar% {                             # boucle sur les coho
         nb <- nb+1
       }
     }
-    ligne <- c(a+34,nb)
+    ligne <- c(a+34,c,nb)
     prev <- rbind(prev,ligne)
   
     vivant <- 0
@@ -55,6 +55,6 @@ foreach(c=1920:2000) %dopar% {                             # boucle sur les coho
   colnames(prev) <- c("age_maladie","cohorte","prevalence")
   prev$cohorte <- as.factor(prev$cohorte)
   colnames(vivants) <- c("age","cohorte","nb_vivants")
-  write.csv(prev_H,file = paste("prev",c,sep="_"))
+  write.csv(prev,file = paste("prev",c,sep="_"))
   write.csv(vivants,file=paste("vivants",c,sep="_"))
 }
