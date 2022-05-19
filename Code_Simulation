@@ -77,8 +77,8 @@ foreach(c=1920:2000) %dopar% {                                      # boucle sur
       annee_naiss <- matrice[i,2]
       age_i <- matrice[i,1]
       
-      v_incidence <- as.numeric(incidence_[a-1,c-1919])              # récupération du taux d'incidence
-      mortalite <- quotient_morta_[a-1,c-1919]                       # récupération du quotient de mortalité
+      v_incidence <- as.numeric(incidence[a-1,c-1919])              # récupération du taux d'incidence
+      mortalite <- quotient_morta[a-1,c-1919]                       # récupération du quotient de mortalité
       
       alea <- runif(1,0,1)                                         
       
