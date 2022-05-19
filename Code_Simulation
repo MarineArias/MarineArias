@@ -14,9 +14,28 @@
 # RR2 : risque relatif de mourir plus d'un an après avoir fait un infarctus
 
 
+## Données
 
-horizon <- 61
-nb_people <- 10000
+# Incidence
+incidence_H <- read.csv(file="taux_incidence_infarctus_age_cohorte_homme.csv",sep=";",dec=",")
+colnames(incidence_H) <- gsub("Gen","",colnames(incidence_H))
+rownames(incidence_H) <- c(35:95)
+
+# Quotient de mortalité 
+quotient_morta_H <- read.csv(file="quotients_mortalite_age_cohorte_homme.csv",sep=";",dec=",")
+colnames(quotient_morta_H) <- gsub("Gen","",colnames(quotient_morta_H))
+rownames(quotient_morta_H) <- c(35:95)
+
+# Les Risques Relatifs
+RR1_H <- 5.62
+conf_RR1_H <- c(5.32,5.93)
+
+RR2_H <- 1.46
+conf_RR2_H <- c(1.41,1.52)
+
+
+horizon <- 61                                                      # temps de simulation (entre 35 et 95 ans = 61 ans)
+nb_people <- 10000                                                 # taille des cohortes générées
 
 
 ## Package
