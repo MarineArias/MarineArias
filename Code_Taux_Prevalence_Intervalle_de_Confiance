@@ -1,26 +1,32 @@
 
+### En utilisant les programmes Code_Simulation_pour_Intervalle_de_Confiance et Code_Prevalence_Intervalle_de_Confiance
+
+## Objectif : calculer des 200 taux de prévalence par âge pour chaque cohorte simulées.
+
+# etats : matrice de 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
+# prev : matrice de 61 lignes et 200 colonnes (diffère selon le nombre d'itérations). Avec les âges en ligne et le nombre de cas en colonne (par cohorte et itérations)
+# vivants : matrice de 61 lignes et 200 colonnes (diffère selon le nombre d'itérations). Avec les âges en ligne et le nombre de vivant en colonne (par cohorte et itérations)
+# taux_prev : matrice de 61 lignes et 200 colonnes (diffère selon le nombre d'itérations). Avec les âges en ligne et le taux de prévalence en colonne (par cohorte et itérations)
 
 
-
+prev <- read.csv("prev_iterations")
+prev$X <- NULL
+colnames(prev) <- gsub("X","",colnames(prev))
+    
+vivants <- read.csv("vivants_iterations")
+vivants$X <- NULL
+colnames(vivants) <- gsub("X","",colnames(vivants))
 
 
 taux_prev <- data.frame(matrix(ncol=201,nrow=61))
 taux_prev[,1] <- c(35:95)
 
+
 for(a in 35:95){                                     # boucle sur les âges
   
   print(a)
-  
+   
   for(it in 1:200) {                                 # boucle sur les itérations
-    
-    prev <- read.csv("prev_iterations")
-    prev$X <- NULL
-    colnames(prev) <- gsub("X","",colnames(prev))
-    
-    vivants <- read.csv("vivants_iterations")
-    vivants$X <- NULL
-    colnames(vivants) <- gsub("X","",colnames(vivants))
-    
     taux_prev[a-34,it+1] <- round((prev[a-34,it+1]/vivants[a-34,it+1])*100,4) # calcul du taux de prévalence
   }
   colnames(taux_prev) <- c("age",1:200)
