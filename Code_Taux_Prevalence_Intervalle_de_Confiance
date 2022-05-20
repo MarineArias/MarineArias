@@ -1,0 +1,29 @@
+
+
+
+
+
+
+taux_prev <- data.frame(matrix(ncol=201,nrow=61))
+taux_prev[,1] <- c(35:95)
+
+for(a in 35:95){                                     # boucle sur les âges
+  
+  print(a)
+  
+  for(it in 1:200) {                                 # boucle sur les itérations
+    
+    prev <- read.csv("prev_iterations")
+    prev$X <- NULL
+    colnames(prev) <- gsub("X","",colnames(prev))
+    
+    vivants <- read.csv("vivants_iterations")
+    vivants$X <- NULL
+    colnames(vivants) <- gsub("X","",colnames(vivants))
+    
+    taux_prev[a-34,it+1] <- round((prev[a-34,it+1]/vivants[a-34,it+1])*100,4) # calcul du taux de prévalence
+  }
+  colnames(taux_prev) <- c("age",1:200)
+  write.csv(taux_prev,file = "taux_prev_iterations")
+}
+
