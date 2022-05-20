@@ -7,10 +7,10 @@
 ## Objectif : calculer l'espérance de vie et l'espérance de vie en bonne santé pour chaque cohorte entre 1920 et 2000
 
 # etats : matrice de 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
-# survivants_sains :
-# survivants :
-# esperance_vie_bonne_sante :
-# esperance_vie :
+# survivants_sains : matrice 61 lignes et 3 colonnes. Avec les âges en ligne et la cohorte et le nombre de survivants sains (personne vivante et en bonne santé) en colonne.
+# survivants : matrice 61 lignes et 3 colonnes. Avec les âges en ligne et la cohorte et le nombre de survivants (sains ou ayant eu un infarctus) en colonne.
+# esperance_vie_bonne_sante : matrice 1 ligne et 2 colonnes. Avec la cohorte et le nombre d'année supplémentaire de vie en bonne santé après 35 ans.
+# esperance_vie : matrice 1 ligne et 2 colonnes. Avec la cohorte et le nombre d'année supplémentaire de vie après 35 ans.
 
 
 ## Package :
