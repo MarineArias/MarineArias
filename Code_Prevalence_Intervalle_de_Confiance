@@ -20,7 +20,7 @@ for(a in 35:95){                              # boucle sur les âges
   
   for(it in 1:200) {                          # boucle sur les itérations
     
-    etats <- read.csv(paste("etats_H_1940",it,sep="_"))
+    etats <- read.csv(paste("etats",it,sep="_"))
     etats$X <- NULL
     colnames(etats) <- gsub("X","",colnames(etats))
   
