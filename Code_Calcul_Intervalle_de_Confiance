@@ -3,10 +3,12 @@
 
 ## Objectif : récupérer les intervalles de confiance par âge des espérances de vie à 35 ans, des prévalences et taux de prévalence.
 
-# ESP_VIE :
-# PREV :
-# SUMMARY_PREV :
-# TX_PREV :
+# esperance_de_vie : matrice 200 lignes, 2 colonnes. Avec les espérances de vie à 35 ans pour chaque itérations de la cohorte de la cohorte simulé
+# esperance_de_vie_bonne_sante : matrice 200 lignes, 2 colonnes. Avec les espérances de vie en bonne santé à 35 ans pour chaque itérations de la cohorte simulé
+# PREV : matrice 61 lignes, 200 colonnes. Avec les âges en lignes et la prévalence par âge en colonne pour chaque itération
+# SUMMARY_PREV : matrice 61 lignes et 4 colonnes. Avec l'âge en ligne et les quantiles à 2,5%, à 97,5% et la moyenne pour les prévalences en colonne pour chaque âge
+# TX_PREV : matrice de 61 lignes et 200 colonnes. Avec les âges en lignes et les taux de prévalence par âge en colonne pour chaque itération
+# SUMMARY_TX_PREV : matrice 61 lignes et 4 colonnes. Avec l'âge en ligne et les quantiles à 2,5%, à 97,5% et la moyenne pour les taux de prévalence en colonne pour chaque âge
 
 
 # Intervalle de confiance pour les espérances de vie à 35 ans
