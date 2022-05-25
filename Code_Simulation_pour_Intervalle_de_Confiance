@@ -18,13 +18,12 @@
 
 ## Données (données présentées pour les hommes. A faire varier selon le sexe)
 
-# Incidence
-incidence <- read.csv("a01_hommes")
-incidence$X <- NULL
-colnames(incidence) <- gsub("X","",colnames(incidence))
-
 # Quotient de mortalité 
-quotient_morta <- read.csv(file="quotient_morta_homme_1940.csv",sep=";",dec=",")
+quotient_morta <- read.csv(file="quotients_mortalite_age_cohorte_homme.csv",sep=";",dec=",")
+colnames(quotient_morta) <- gsub("Gen","",colnames(quotient_morta))
+colnames(quotient_morta) <- c("age",1920:2000)
+quotient_morta$age <- NULL
+
 
 # Risque Relatif
 beta1_2 <- read.csv("beta1_2")
@@ -32,7 +31,6 @@ beta1_2$X <- NULL
 colnames(beta1_2) <- gsub("X","",colnames(beta1_2))
 
 
-cohorte <- c(1940)                                         # à moduler selon les cohortes voulues
 nb_people <- 10000                                         # nombre d'individus simulés par cohorte
 
 
@@ -48,102 +46,104 @@ registerDoParallel(cl)
 
 T_1 <- Sys.time()
 
-foreach(it=1:200) %dopar% {                               # boucle sur les itérations
+foreach(c=1920:2000) %dopar%{                                     # bouche sur les cohortes
   
-  print(it)
-  
-  for(c in cohorte){
+  for(it in 1:200) {                                              # boucle sur les itérations
     
-    matrice <- matrix(c(0),                               # génération de la matrice des individus
-                      nrow = nb_people,
-                      ncol = 4)
+    print(it)
+    
+    incidence <- read.csv(paste("a01_homme",it,sep="_"))          # lecture de la matrice des états pour la cohorte c
+    incidence$X <- NULL
+    colnames(incidence) <- gsub("X","",colnames(incidence))
+    colnames(incidence) <- c(1920:2000)
+
+    matrice <- matrix(c(0),                                       # génération de la matrice des individus
+                        nrow = nb_people,
+                        ncol = 4)
     colnames(matrice) <- c("age","cohorte","age_maladie","age_deces")
-    matrice <- as.data.frame(matrice)
-    
+    matrice_H <- as.data.frame(matrice)
+      
     n <- 1
     m <- nb_people
     for(ind in n:m){
       matrice[ind,2] <- c
       matrice[ind,1] <- 35
     }
-  
-
-    etats <- matrix(c(0),                                 # génération de la matrice des états
-               nrow = nb_people,
-               ncol = 61)
-    colnames(etats) <- c(35:95)
-
-
-    for (a in 2:61){                                      # pour aller de 35 à 95 ans
-      print(a+34)
-
-      for (i in 1:nrow(etats)){
-        age_i <- matrice[i,1]
-        annee_naiss <- matrice[i,2]
-
-     
-        v_incidence <- as.numeric(incidence[a-1,c-1919])            # récupération du taux d'incidence
-        mortalite <- quotient_morta[a-1,c-1919]                     # récupération du quotient de mortalité
       
+    
+    etats <- matrix(c(0),                                         # génération de la matrice des états
+                      nrow = nb_people,
+                      ncol = 81)
+    colnames(etats) <- c(35:115)
+      
+      
+    for (a in 2:81){                                              # pour aller de 35 à 95 ans
+      print(a+34)
+        
+      for (i in 1:nrow(etats)){
+        age_i <- matrice_H[i,1]
+        annee_naiss <- matrice[i,2]
+          
+        v_incidence <- incidence[a-1,c-1919]  # récupération des taux d'incidence
+        mortalite <- quotient_morta[a-1,c-1919]                   # récupération du quotient de mortalité
+        
 
-        RR1 <- exp(beta1_2[it,1])                         # calcul du risque relatif de mourir durant la première année après avoir fait un infarctus du myocarde
-        RR2 <- exp(beta1_2[it,2])                         # calcul du risque relatif de mourir plus d'un an après avoir fait un infarctus
-
+        RR1 <- exp(beta1_2[it,1])                                 # calcul du risque relatif de mourir durant la première année après avoir fait un infarctus du myocarde
+        RR2 <- exp(beta1_2[it,2])                                 # calcul du risque relatif de mourir plus d'un an après avoir fait un infarctus
+          
         alea <- runif(1,0,1)
-
-        if (etats[i,a-1] == 0){                           # état 0 : vivant sain
-          if (alea <= incidence){                         # transition : faire un infarctus du myocarde
+         
+        if (etats[i,a-1] == 0){                                   # état 0 : vivant sain
+          if (alea <= v_incidence){                               # transition : faire un infarctus du myocarde
             etats[i,a] <- 1
             matrice[i,3] <- age_i
-
+              
             alea2 <- runif(1,0,1)
-            if (alea2 <= mortalite*RR1){                  # transition : passage à l'état 3 : mourir dans la première année
+            if (alea2 <= mortalite*RR1){                          # transition : passage à l'état 3 : mourir dans la première année
               etats[i,a] <- 3
               matrice[i,4] <- age_i
             }
           }
-
+            
           alea3 <- runif(1,0,1)
-          if (alea3 <= mortalite & alea > incidence){     # transition : mourir sans avoir fait d'infarctus du myocarde
+          if (alea3 <= mortalite & alea > v_incidence){           # transition : mourir sans avoir fait d'infarctus du myocarde
             etats[i,a] <- 2
             matrice[i,4] <- age_i
           }
-          if (alea3 > mortalite & alea > incidence){      # rester sain
+          if (alea3 > mortalite & alea > v_incidence){            # rester sain
             etats[i,a] <- 0
           }
         }
-
-        if (etats[i,a-1] == 1){                           # état 1 : vivant ayant fait un infarctus du myocarde
+          
+        if (etats[i,a-1] == 1){                                   # état 1 : vivant ayant fait un infarctus du myocarde
           morta <- mortalite*RR2
-          if (alea > morta){                              # rester vivant mais malade
+          if (alea > morta){                                      # rester vivant mais malade
             etats[i,a] <- 1
           }
-          if (alea <= morta){                             # transition : mourir en ayant fait un infarctus du myocarde après la première année
+          if (alea <= morta){                                     # transition : mourir en ayant fait un infarctus du myocarde après la première année
             etats[i,a] <- 2
             matrice[i,4] <- age_i
           }
         }
-
-        if (etats[i,a-1] == 2){                           # état 2 : mourir
+          
+        if (etats[i,a-1] == 2){                                   # état 2 : mourir
           etats[i,a] <- 2
         }
-
-        if (etats[i,a-1] == 3){                           # transition : l'individu mort d'un infarctus du myocarde durant la première année passe à mort simple l'année qui suit
+          
+        if (etats[i,a-1] == 3){                                   # transition : l'individu mort d'un infarctus du myocarde durant la première année passe à mort simple l'année qui suit
           etats[i,a] <- 2
         }
-
-        if (matrice[i,1]<=115 & etats[i,a]!= 2){          # vieillissement de l'individu
+          
+        if (matrice[i,1]<=115 & etats[i,a]!= 2){                  # vieillissement de l'individu
           matrice[i,1] <- matrice[i,1] + 1
         }
       }
     }
+    write.csv(matrice,file = paste("matrice",c,it,sep="_"))
+    write.csv(etats,file = paste("etats",c,it,sep="_"))
   }
-  write.csv(matrice,file = paste("matrice",it,sep="_"))
-  write.csv(etats,file = paste("etats",it,sep="_"))
 }
-
 T_2 <- Sys.time()
 Tdiff <- difftime(T_2,T_1)
 Tdiff
-
 
