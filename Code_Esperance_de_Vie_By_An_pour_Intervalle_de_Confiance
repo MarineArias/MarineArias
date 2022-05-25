@@ -1,0 +1,96 @@
+
+
+### En utilisant le programme Code_Simulation_pour_Intervalle_de_Confiance
+
+## Objectif : Calculer l'espérance de vie à 35 ans et l'espérance de vie en bonne santé à 35 ans pour une année donnée plusieurs fois
+
+# survivants_an : matrice 81 lignes et 201 colonnes. Avec les âges en ligne et le nombre de survivants pour chaque âge et itérations en colonne.
+# esperance_vie_an : matrice 1 ligne et 200 colonnes. Avec l'année correspondante en ligne et le nombre d'année supplémentaire de vie après 35 ans, pour chaque itération, en colonne.
+# survivants_sains_an : matrice 81 lignes et 201 colonnes. Avec les âges en ligne et le nombre de survivants sains pour chaque âge et itérations en colonne.
+# esperance_vie_bonne_sante_an : matrice 1 ligne et 200 colonnes. Avec l'année correspondante en ligne et le nombre d'année supplémentaire de vie en bonne santé après 35 ans, pour chaque itération, en colonne.
+# etats : matrice de 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
+
+
+annee <- c(2035)                     # à moduler selon les années voulues
+
+for(an in annee){                    # boucle sur les années
+  
+  print(an)
+  
+  survivants_an <- data.frame(matrix(ncol=4,nrow=81))
+  esperance_vie_an <- data.frame(matrix(ncol=4,nrow=1))
+  
+  survivants_sains_an <- data.frame(matrix(ncol=4,nrow=81))
+  esperance_vie_bonne_sante_an <- data.frame(matrix(ncol=4,nrow=1))
+  
+  int_min <- an - 115                # calcul de l'intervalle sur les cohortes : borne inférieure
+  int_max <- an - 35                 # calcul de l'intervalle sur les cohortes : borne supérieure
+  
+  for(c in int_min:int_max){         # boucle sur les cohortes
+    
+    for(it in 1:200){
+      
+      etats <- read.csv(paste("etats",c,it,sep="_"))
+      etats$X <- NULL
+      colnames(etats) <- gsub("X","",colnames(etats))
+      
+      A <- an - c
+      
+      vivant <- 0
+      vivant_sain <- 0
+      
+      if(A>=36){
+        for(i in 1:nrow(etats)){
+          if(etats[i,A-34] == 0 | etats[i,A-34]==1){
+            vivant = vivant +1
+          }
+          if((etats[i,A-34] ==2 | etats[i,A-34]==3) & (etats[i,A-34-1]==1 | etats[i,A-34-1]==0)){
+            vivant = vivant + 0.5
+          }
+          if(etats[i,A-34] == 0){
+            vivant_sain = vivant_sain +1
+          }
+          if(etats[i,A-34] ==2 & etats[i,A-34-1]==0){
+            vivant_sain = vivant_sain + 0.5
+          }
+        }
+        survivants_an[A-34,1] <- A
+        survivants_an[A-34,it+1] <- vivant
+        survivants_an[1,1] <- 35
+        survivants_an[1,it+1] <- 10000
+        
+        survivants_sains_an[A-34,1] <- A
+        survivants_sains_an[A-34,it+1] <- vivant_sain
+        survivants_sains_an[1,1] <- 35
+        survivants_sains_an[1,it+1] <- 10000
+      }
+    }
+    
+    esperance_vie_an[1,1] <- an
+    for(it in 1:200){
+      somme <- 0
+      for(a in 1:nrow(survivants_an)){
+        somme <- somme + survivants_an[a,it+1]
+      }
+      e <- 1/2 + somme/10000                 # calcul de l'espérance de vie pour l'année "an"
+      esperance_vie_an[1,it+1] <- e
+    }
+    colnames(esperance_vie_an) <- c("annee",1:200)
+    
+    
+    esperance_vie_bonne_sante_an[1,1] <- an
+    for(it in 1:200){
+      somme_sain <- 0
+      for(a in 1:nrow(survivants_sains_an)){
+        somme_sain <- somme_sain + survivants_sains_an[a,it+1]
+      }
+      e <- 1/2 + somme_sain/10000            # calcul de l'espérance de vie en bonne santé pour l'année "an"
+      esperance_vie_bonne_sante_an[1,it+1] <- e
+    }
+    colnames(esperance_vie_bonne_sante_an) <- c("annee",1:200)
+    
+  }
+  write.csv(esperance_vie_an,file = paste("esperance_vie_an",an,sep="_"))
+  write.csv(esperance_vie_bonne_sante_an,file = paste("esperance_vie_bonne_sante_an",an,sep="_"))
+  
+}
