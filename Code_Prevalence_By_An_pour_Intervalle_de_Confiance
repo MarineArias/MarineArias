@@ -22,8 +22,8 @@ foreach(an=2015:2035) %dopar% {                          # boucle sur les année
   int_min <- an - 95                       # calcul de l'intervalle des cohortes : borne inférieure
   int_max <- an - 35                       # calcul de l'intervalle des cohortes : borne supérieure
   
-  prevalence_by_an_H <- data.frame(matrix(nrow=60,ncol=201))
-  vivants_by_an_H <- data.frame(matrix(nrow=60,ncol=201))
+  prevalence_by_an <- data.frame(matrix(nrow=60,ncol=201))
+  vivants_by_an <- data.frame(matrix(nrow=60,ncol=201))
   
   for(c in int_min:int_max){
     
@@ -32,40 +32,40 @@ foreach(an=2015:2035) %dopar% {                          # boucle sur les année
     print(A)
     
     if(A>=36){
-      for(it in 1:200) {                   # boucle sur les itérations
+      for(it in 1:200) {                                # boucle sur les itérations
         print(it)
         
-        etats_H <- read.csv(paste("etats_H",c,it,sep="_"))
-        etats_H$X <- NULL
-        colnames(etats_H) <- gsub("X","",colnames(etats_H))
+        etats <- read.csv(paste("etats",c,it,sep="_"))
+        etats$X <- NULL
+        colnames(etats) <- gsub("X","",colnames(etats))
         
-        prevalence_by_an_H[A-35,1] <- A
-        vivants_by_an_H[A-35,1] <- A
+        prevalence_by_an[A-35,1] <- A
+        vivants_by_an[A-35,1] <- A
         
         nb = 0
         vivant <- 0
         
-        for(i in 1:nrow(etats_H)){
-          if(etats_H[i,A-34]==1 |etats_H[i,A-34]==3){       # calcul de la prévalence
+        for(i in 1:nrow(etats)){
+          if(etats[i,A-34]==1 |etats[i,A-34]==3){       # calcul de la prévalence
             nb <- nb+1
           }
           
-          if(etats_H[i,A-34] == 1 | etats_H[i,A-34] == 0){  # calcul des vivants
+          if(etats[i,A-34] == 1 | etats[i,A-34] == 0){  # calcul des vivants
             vivant = vivant +1
           }
-          if((etats_H[i,A-34] == 2 | etats_H[i,A-34]==3) & (etats_H[i,A-34-1]==1 | etats_H[i,A-34-1]==0)){
+          if((etats[i,A-34] == 2 | etats[i,A-34]==3) & (etats[i,A-34-1]==1 | etats[i,A-34-1]==0)){
             vivant = vivant + 0.5
           }
         } 
-        prevalence_by_an_H[A-35,it+1] <- nb
+        prevalence_by_an[A-35,it+1] <- nb
         
-        vivants_by_an_H[A-35,it+1] <- vivant
+        vivants_by_an[A-35,it+1] <- vivant
       }
     }
   }
-  colnames(prevalence_by_an_H) <- c("age",1:200)
-  colnames(vivants_by_an_H) <- c("age",1:200)
-  write.csv(prevalence_by_an_H,file=paste("prevalence_by_an_H",an,sep="_"))
-  write.csv(vivants_by_an_H,file=paste("vivants_by_an_H",an,sep="_"))
+  colnames(prevalence_by_an) <- c("age",1:200)
+  colnames(vivants_by_an) <- c("age",1:200)
+  write.csv(prevalence_by_an,file=paste("prevalence_by_an",an,sep="_"))
+  write.csv(vivants_by_an,file=paste("vivants_by_an",an,sep="_"))
 }
 
