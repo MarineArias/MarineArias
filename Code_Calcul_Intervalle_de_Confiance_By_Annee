@@ -1,0 +1,72 @@
+
+
+### En utilisant les programmes Code_Simulation_pour_Intervalle_de_Confiance, Code_Esperance_de_vie_By_An_Intervalle_de_Confiance et Code_Prevalence_By_An_pour_Intervalle_de_Confiance
+
+## Objectif : récupérer les intervalles de confiance par âge des espérances de vie à 35 ans, des prévalences et taux de prévalence pour chaque année.
+
+# esperance_de_vie : matrice 1 ligne, 201 colonnes. Avec les espérances de vie à 35 ans pour chaque itérations de l'année donnée
+# esperance_de_vie_bonne_sante : matrice 1 ligne, 201 colonnes. Avec les espérances de vie en bonne santé à 35 ans pour chaque itérations de l'année donnée
+# TX_PREV : matrice de 81 lignes et 201 colonnes. Avec les âges en lignes et les taux de prévalence par âge en colonne pour chaque itération pour l'année donnée
+# SUMMARY_TX_PREV : matrice 81 lignes et 4 colonnes. Avec l'âge en ligne et les quantiles à 2,5%, à 97,5% et la moyenne pour les taux de prévalence en colonne pour chaque âge
+
+
+
+# Intervalle de confiance pour les espérances de vies à 35 ans
+esperance_de_vie <- read.csv("esperance_vie_an_H_test_2035")
+esperance_de_vie$X <- NULL
+colnames(esperance_de_vie) <- gsub("X","",colnames(esperance_de_vie))
+
+esperance_de_vie_bonne_sante <- read.csv("esperance_vie_bonne_sante_an_H_test_2035")
+esperance_de_vie_bonne_sante$X <- NULL
+colnames(esperance_de_vie_bonne_sante) <- gsub("X","",colnames(esperance_de_vie_bonne_sante))
+
+rowMeans(esperance_de_vie[1,2:201])
+rowMeans(esperance_de_vie_bonne_sante[1,2:201])
+
+ESP <- t(esperance_de_vie)
+ESP <- as.data.frame(ESP[2:201,1])
+colnames(ESP) <- c("esp")
+
+ESP_BS <- t(esperance_de_vie_bonne_sante)
+ESP_BS <- as.data.frame(ESP_BS[2:201,1])
+colnames(ESP_BS) <- c("esp")
+
+quantile(ESP$esp,probs=c(0.025,0.975))
+quantile(ESP_BS$esp,probs=c(0.025,0.975))
+
+
+
+# Intervalle de confiance pour les taux de prévalence par âge
+TX_PREV_H <- read.csv("taux_prev_H_iterations_2035")
+TX_PREV_H$X <- NULL
+colnames(TX_PREV_H) <- gsub("X","",colnames(TX_PREV_H))
+TX_PREV_H <- TX_PREV_H[1:60,]
+
+
+SUM_TX_PREV_H <- data.frame(matrix(nrow=60,ncol=4))
+
+for(a in 1:nrow(TX_PREV_H)){
+  age <- TX_PREV_H[a,2:200]
+  moy <- rowMeans(age)
+  quantile <- quantile(age,probs=c(0.025,0.975))
+  q1 <- quantile[1]
+  q2 <- quantile[2]
+  
+  SUM_TX_PREV_H[a,1] <- a+34
+  SUM_TX_PREV_H[a,2] <- q1
+  SUM_TX_PREV_H[a,3] <- moy
+  SUM_TX_PREV_H[a,4] <- q2
+}
+colnames(SUM_TX_PREV_H) <- c("age","q_2.5","moyenne","q_97.5")
+
+
+# Graphique 
+library(ggplot2)
+ggplot(SUM_TX_PREV_H,aes(age))+
+  geom_ribbon(aes(ymin=q_2.5,ymax=q_97.5),fill="grey96")+
+  geom_line(aes(y=moyenne,color="moyenne"))+
+  geom_line(aes(y=q_97.5,color="Quantile à 97,5%"))+
+  geom_line(aes(y=q_2.5,color="Quantile à 2,5%"))+
+  theme_classic()+
+  labs(y="taux de prévalence (%)")+
+  scale_color_manual(values=c("black","grey93","grey90"))
