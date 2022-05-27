@@ -64,7 +64,6 @@ ggplot(SUM_PREV,aes(age))+
 
 
 
-
 # Intervalle de confiance pour les taux de prévalence par âge
 TX_PREV <- read.csv("taux_prev_iterations")
 TX_PREV$X <- NULL
