@@ -1,19 +1,19 @@
 
 
-### En utilisant le programme Code_Simulation_pour_Intervalle_de_Confiance
+### By using the programme Code_Simulation_pour_Intervalle_de_Confiance
 
-## Objectif : Calculer l'espérance de vie à 35 ans et l'espérance de vie en bonne santé à 35 ans pour une année donnée plusieurs fois
+## Purpose : Compute life expectancy at age 35 and healthy life expectancy at age 35 for a given year multiple times
 
-# survivants_an : matrice 81 lignes et 201 colonnes. Avec les âges en ligne et le nombre de survivants pour chaque âge et itérations en colonne.
-# esperance_vie_an : matrice 1 ligne et 200 colonnes. Avec l'année correspondante en ligne et le nombre d'année supplémentaire de vie après 35 ans, pour chaque itération, en colonne.
-# survivants_sains_an : matrice 81 lignes et 201 colonnes. Avec les âges en ligne et le nombre de survivants sains pour chaque âge et itérations en colonne.
-# esperance_vie_bonne_sante_an : matrice 1 ligne et 200 colonnes. Avec l'année correspondante en ligne et le nombre d'année supplémentaire de vie en bonne santé après 35 ans, pour chaque itération, en colonne.
-# etats : matrice de 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
+# survivants_an : matrix with 81 rows and 201 columns. With the ages in rows and the number of survivors for each age and iterations in columns.
+# esperance_vie_an : matrix with 1 line and 200 columns. With the corresponding year in line and the number of additional years of life after 35 years, for each iteration, in column.
+# survivants_sains_an : matrix with 81 rows and 201 columns. With ages in rows and number of healthy survivors for each age and iterations in columns.
+# esperance_vie_bonne_sante_an : matrix with 1 line and 200 columns. With the corresponding year in line and the number of additional years of healthy life after age 35, for each iteration, in column.
+# etats : matrix of 10,000 rows and 61 columns. With individuals in rows and ages 35-95 in columns implementing the different states of 0, 1, 2, and 3.
 
 
-annee <- c(2035)                     # à moduler selon les années voulues
+annee <- c(2035)                     # to be modulated according to the desired years
 
-for(an in annee){                    # boucle sur les années
+for(an in annee){                    # loop over the years
   
   print(an)
   
@@ -23,10 +23,10 @@ for(an in annee){                    # boucle sur les années
   survivants_sains_an <- data.frame(matrix(ncol=4,nrow=81))
   esperance_vie_bonne_sante_an <- data.frame(matrix(ncol=4,nrow=1))
   
-  int_min <- an - 115                # calcul de l'intervalle sur les cohortes : borne inférieure
-  int_max <- an - 35                 # calcul de l'intervalle sur les cohortes : borne supérieure
+  int_min <- an - 115                # calculation of the interval on the cohorts: lower limit
+  int_max <- an - 35                 # alculation of the interval on the cohorts: upper limit
   
-  for(c in int_min:int_max){         # boucle sur les cohortes
+  for(c in int_min:int_max){         # loop over cohorts
     
     for(it in 1:200){
       
@@ -72,7 +72,7 @@ for(an in annee){                    # boucle sur les années
       for(a in 1:nrow(survivants_an)){
         somme <- somme + survivants_an[a,it+1]
       }
-      e <- 1/2 + somme/10000                 # calcul de l'espérance de vie pour l'année "an"
+      e <- 1/2 + somme/10000                 # calculation of life expectancy for the year 'an'
       esperance_vie_an[1,it+1] <- e
     }
     colnames(esperance_vie_an) <- c("annee",1:200)
@@ -84,7 +84,7 @@ for(an in annee){                    # boucle sur les années
       for(a in 1:nrow(survivants_sains_an)){
         somme_sain <- somme_sain + survivants_sains_an[a,it+1]
       }
-      e <- 1/2 + somme_sain/10000            # calcul de l'espérance de vie en bonne santé pour l'année "an"
+      e <- 1/2 + somme_sain/10000            # calculation of life expectancy in good health for the year 'an'
       esperance_vie_bonne_sante_an[1,it+1] <- e
     }
     colnames(esperance_vie_bonne_sante_an) <- c("annee",1:200)
