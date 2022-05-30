@@ -1,9 +1,9 @@
 
-### En utilisant le programme Code_Simulation_pour_Intervalle_de_Confiance 
-# Attention : les espérances de vie sont calculés pour 35 ans sur 81 ans (de 35 à 115 ans)
-# Le code de simulation doit être adapté à ce cas
+### By using the programm Code_Simulation_pour_Intervalle_de_Confiance 
+# Attention : life expectancies are calculated for 35 years out of 81 years (from 35 to 115 years)
+# The simulation code must be adapted to this case
 
-## Objectif : calculer l'espérance de vie et l'espérance de vie en bonne santé à 35 ans, pour chaque itération des cohortes choisies
+## Purpose : Compute life expectancy and life expectancy in good health at age 35, for each iteration of the chosen cohorts
 
 # etats : matrice de 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
 # survivants :
