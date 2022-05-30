@@ -5,15 +5,15 @@
 
 ## Purpose : Compute life expectancy and life expectancy in good health at age 35, for each iteration of the chosen cohorts
 
-# etats : matrice de 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
-# survivants :
-# esperance_vie :
-# survivants_sains :
-# esperance_vie_bonne_sante :
+# etats : matrice de 10 000 lignes et 81 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
+# survivants : matrix with 81 rows and 201 columns. With the ages in line and the number of survivors (healthy or having had a heart attack) in the column for each iteration.
+# esperance_vie : matrix with 201 lines and 2 columns. With the iteration number and the number of additional years of life after 35 years.
+# survivants_sains : matrix with 81 rows and 201 columns. With the ages in rows and the number of healthy survivors (living healthy person) in columns for each iteration.
+# esperance_vie_bonne_sante : matrix with 201 line and 2 columns. With the iteration number and the number of additional years of life in good health after 35 years.
 
 
 
-# Calcul espérance de vie à 35 ans
+# Life expectancy calculation at age 35
 
 survivants <- data.frame(matrix(ncol=201,nrow=81))
 survivants[1:81,1]<- c(35:115)
@@ -23,18 +23,18 @@ colnames(survivants) <- c("age",1:200)
 esperance_vie<- data.frame(matrix(ncol=2,nrow=0))
 
 
-for(a in 36:115){                        # boucle sur les âges
+for(a in 36:115){                        # loop over the ages
   
   print(a)
   
-  for(it in 1:200) {                     # boucle sur les itérations
+  for(it in 1:200) {                     # loop over iterations
  
     etats<- read.csv(paste("etats",it,sep="_"))
     etats$X <- NULL
     colnames(etats) <- gsub("X","",colnames(etats))
     
     vivant <- 0
-    for(i in 1:nrow(etats)){             # calcul des vivants à l'âge a ou des décédés à l'âge a mais vivant à l'âge a-1 (malades et sains)
+    for(i in 1:nrow(etats)){             # calculation of the number of individuals living at age a or deceased at age a but living at age a-1 (sick and healthy)
       if(etats[i,a-34] == 0 | etats[i,a-34]==1){
         vivant = vivant +1
       }
@@ -52,7 +52,7 @@ for(it in 2:ncol(survivants)){
   for(a in 1:nrow(survivants)){
     somme <- somme + survivants[a,it]
   }
-  e <- 1/2 + somme/10000                 # calcul de l'espérance de vie
+  e <- 1/2 + somme/10000                 # life expectancy calculation
   ligne <- c(it-1,e)
   esperance_vie <- rbind(esperance_vie,ligne)
 }
@@ -73,18 +73,18 @@ colnames(survivants_sains) <- c("age",1:200)
 esperance_vie_bonne_sante <- data.frame(matrix(ncol=2,nrow=0))
 
 
-for(a in 36:95){                          # boucle sur les âges
+for(a in 36:95){                          # loop over the ages
   
   print(a)
   
-  for(it in 1:200) {                      # boucle sur les itérations
+  for(it in 1:200) {                      # loop over iterations
     
     etats <- read.csv(paste("etats",it,sep="_"))
     etats$X <- NULL
     colnames(etats) <- gsub("X","",colnames(etats))
     
     vivant <- 0
-    for(i in 1:nrow(etats)){              # calcul des survivants sains à l'âge a ou des décédés à l'âge a mais vivant sain à l'âge a-1
+    for(i in 1:nrow(etats)){              # calculation of the number of healthy survivors at age a or of deceased at age a but living healthy at age a-1
       if(etats[i,a-34] == 0){
         vivant = vivant +1
       }
@@ -102,7 +102,7 @@ for(it in 2:ncol(survivants_sains)){
   for(a in 1:nrow(survivants_sains)){
     somme <- somme + survivants_sains[a,it]
   }
-  e <- 1/2 + somme/10000                  # calcul de l'espérance de vie en bonne santé
+  e <- 1/2 + somme/10000                  # calculation of healthy life expectancy
   ligne <- c(it-1,e)
   esperance_vie_bonne_sante <- rbind(esperance_vie_bonne_sante,ligne)
 }
