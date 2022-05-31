@@ -1,40 +1,39 @@
 
-### En utilisant les programmes Code_Simulation_pour_Intervalle_de_Confiance et Code_Prevalence_By_An_pour_Intervalle_de_Confiance
+### By using the programs Code_Simulation_pour_Intervalle_de_Confiance and Code_Prevalence_By_An_pour_Intervalle_de_Confiance
 
-## Objectif : calcul des taux de prévalence pour chaque année entre 2015 et 2035
+## Purpose : calculation of prevalence rates for each year between 2015 and 2035
 
-# prevalence : matrice de 61 lignes et 201 colonnes. Avec les âges en ligne et la prévalence pour chaque âge à chaque itération en colonne (pour chaque année)
-# vivants : matrice de 61 lignes et 201 colonnes. Avec les âges en ligne et le nombre de vivants pour chaque âge à chaque itération en colonne (pour chaque année).
-# taux_prev : matrice de 61 lignes et 201 colonnes. Avec les âges en ligne et le taux de prevalence pour chaque âge à chaque itération en colonne (pour chaque année).
-
-
+# prevalence : matrix of 61 rows and 201 columns. With ages in rows and prevalence for each age at each iteration in columns (for each year)
+# vivants : matrix of 61 rows and 201 columns. With the ages in rows and the number of living for each age at each iteration in columns (for each year).
+# taux_prev : matrix of 61 rows and 201 columns. With the ages in rows and the prevalence rate for each age at each iteration in columns (for each year).
 
 
-for(an in 2015:2035){                                             # boucle sur les années
+
+for(an in 2015:2035){                                             # loop over the years
   
   print(an)
   
-  taux_prev_H <- data.frame(matrix(nrow=60,ncol=201))
+  taux_prev <- data.frame(matrix(nrow=60,ncol=201))
   
-  prevalence <- read.csv(paste("prevalence_by_an_H",an,sep="_"))
+  prevalence <- read.csv(paste("prevalence_by_an",an,sep="_"))
   prevalence$X <- NULL
   colnames(prevalence) <- gsub("X","",colnames(prevalence))
   prevalence <- prevalence[order(prevalence$age),]
   
-  vivants <- read.csv(paste("vivants_by_an_H",an,sep="_"))
+  vivants <- read.csv(paste("vivants_by_an",an,sep="_"))
   vivants$X <- NULL
-  colnames(vivants) <- gsub("X","",colnames(vivants_H_1940))
+  colnames(vivants) <- gsub("X","",colnames(vivants))
                       
-  for(a in 36:95){                                                # boucle sur les âges
+  for(a in 36:95){                                                # loop over ages
     
-    taux_prev_H[a-35,1] <- a
+    taux_prev[a-35,1] <- a
     print(a)
     
     for(it in 1:200){
       
-      taux_prev_H[a-35,it+1] <- round((prevalence[a-35,it+1]/vivants[a-35,it+1])*100,4) # calcul du taux de prévalence
+      taux_prev[a-35,it+1] <- round((prevalence[a-35,it+1]/vivants[a-35,it+1])*100,4) # prevalence rates calculation
     }
   }
-  colnames(taux_prev_H) <- c("age",1:200)
-  write.csv(taux_prev_H,file = paste("taux_prev_H_iterations",an,sep="_"))
+  colnames(taux_prev) <- c("age",1:200)
+  write.csv(taux_prev,file = paste("taux_prev_iterations",an,sep="_"))
 }  
