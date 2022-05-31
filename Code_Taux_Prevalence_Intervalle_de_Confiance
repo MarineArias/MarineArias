@@ -1,12 +1,12 @@
 
-### En utilisant les programmes Code_Simulation_pour_Intervalle_de_Confiance et Code_Prevalence_Intervalle_de_Confiance
+### Using Code_Simulation_pour_Intervalle_de_Confiance and Code_Prevalence_Intervalle_de_Confiance programs
 
-## Objectif : calculer des 200 taux de prévalence par âge pour chaque cohorte simulées.
+## Purpose : compute 200 age-specific prevalence rates for each simulated cohort.
 
-# etats : matrice de 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
-# prev : matrice de 61 lignes et 200 colonnes (diffère selon le nombre d'itérations). Avec les âges en ligne et le nombre de cas en colonne (par cohorte et itérations)
-# vivants : matrice de 61 lignes et 200 colonnes (diffère selon le nombre d'itérations). Avec les âges en ligne et le nombre de vivant en colonne (par cohorte et itérations)
-# taux_prev : matrice de 61 lignes et 200 colonnes (diffère selon le nombre d'itérations). Avec les âges en ligne et le taux de prévalence en colonne (par cohorte et itérations)
+# etats : matrix of 10,000 rows and 61 columns. With individuals in rows and ages 35-95 in columns implementing the different states of 0, 1, 2, and 3
+# prev : matrix of 61 rows and 200 columns (differs according to the number of iterations). With ages in rows and number of cases in columns (by cohort and iterations)
+# vivants : matrix of 61 rows and 200 columns (differs according to the number of iterations). With the ages in rows and the number of living in columns (by cohort and iterations)
+# taux_prev :  matrix of 61 rows and 200 columns (differs according to the number of iterations). With ages in rows and prevalence rate in columns (by cohort and iterations)
 
 
 prev <- read.csv("prev_iterations")
@@ -22,12 +22,12 @@ taux_prev <- data.frame(matrix(ncol=201,nrow=61))
 taux_prev[,1] <- c(35:95)
 
 
-for(a in 35:95){                                     # boucle sur les âges
+for(a in 35:95){                                     # loop overs ages
   
   print(a)
    
-  for(it in 1:200) {                                 # boucle sur les itérations
-    taux_prev[a-34,it+1] <- round((prev[a-34,it+1]/vivants[a-34,it+1])*100,4) # calcul du taux de prévalence
+  for(it in 1:200) {                                 # loop over iterations
+    taux_prev[a-34,it+1] <- round((prev[a-34,it+1]/vivants[a-34,it+1])*100,4) # prevalence rates calculation
   }
   colnames(taux_prev) <- c("age",1:200)
   write.csv(taux_prev,file = "taux_prev_iterations")
