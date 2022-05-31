@@ -1,26 +1,26 @@
 
 
-### En utilisant les programmes Code_Simulation et Code_Prevalence_By_An
+### Using Code_Simulation and Code_Prevalence_By_An programs
 
-## Objectif : calculer les taux de prévalence par âge pour chaque année
+## Purpose : compute age-specific prevalence rates for each year
 
-# etats :  matrice de 10 000 lignes et 61 colonnes. Avec les individus en ligne et les âges de 35 à 95 ans en colonne implémentant les différents états de 0, 1, 2 et 3
-# PREV_BY_AN : matrice de 61 lignes et 4 colonnes. Avec les âges en ligne et la prévalence et le nombre de vivants pour chaque âge en colonne (pour chaque année)
-# taux_prev_by_an : matrice de 61 lignes et 3 colonnes. Avec les âges en ligne et l'année de référence et le taux de prévalence pour chaque âge en colonne (pour chaque année)
+# etats : matrix of 10,000 rows and 61 columns. With individuals in rows and ages 35-95 in columns implementing the different states of 0, 1, 2, and 3
+# PREV_BY_AN : matrix of 61 rows and 4 columns. With ages in rows and prevalence and number alive for each age in columns (for each year)
+# taux_prev_by_an : matrix of 61 rows and 3 columns. With ages in rows and reference year and prevalence rate for each age in column (for each year)
 
 
-for(an in 2015:2035){                                             # boucle sur les années
+for(an in 2015:2035){                                             # loop over the years
   
   print(an)
   
   taux_prev_by_an <- data.frame(matrix(ncol=3,nrow=0))
   
-  PREV_BY_AN <- read.csv(paste("prevalence_by_an",an,sep="_"))    # lecture de la matrice des prévalences pour l'année an
+  PREV_BY_AN <- read.csv(paste("prevalence_by_an",an,sep="_"))    # read the prevalence matrix for year 'an'
   PREV_BY_AN$X <- NULL
   colnames(PREV_BY_AN) <- gsub("X","",colnames(PREV_BY_AN))
   PREV_BY_AN <- PREV_BY_AN[order(PREV_BY_AN$age),]
   
-  for(a in 36:95){                                                # calcul du taux de prévalence
+  for(a in 36:95){                                                # calculation of the prevalence rate
     prev <- PREV_BY_AN[a-35,3]
     vivants <- PREV_BY_AN[a-35,4]
 
